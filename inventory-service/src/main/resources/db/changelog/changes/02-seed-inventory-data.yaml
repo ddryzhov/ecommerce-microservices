@@ -1,0 +1,24 @@
+databaseChangeLog:
+  - changeSet:
+      id: 02-seed-inventory-data
+      author: daniil
+      changes:
+        - insert:
+            tableName: inventory_items
+            columns:
+              - column: { name: sku_code, value: 'SKU-BOOK-001' }
+              - column: { name: quantity, valueNumeric: 100 }
+        - insert:
+            tableName: inventory_items
+            columns:
+              - column: { name: sku_code, value: 'SKU-BOOK-002' }
+              - column: { name: quantity, valueNumeric: 50 }
+        - insert:
+            tableName: inventory_items
+            columns:
+              - column: { name: sku_code, value: 'SKU-BOOK-003' }
+              - column: { name: quantity, valueNumeric: 0 }
+      rollback:
+        - delete:
+            tableName: inventory_items
+            where: "sku_code IN ('SKU-BOOK-001','SKU-BOOK-002','SKU-BOOK-003')"
