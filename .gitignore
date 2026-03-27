@@ -24,3 +24,5 @@ Thumbs.db
 
 # Spring Boot
 spring-shell.log
+
+.env
