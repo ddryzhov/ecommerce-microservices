@@ -29,6 +29,9 @@
     <modules>
         <module>order-service</module>
         <module>inventory-service</module>
+        <module>config-server</module>
+        <module>naming-server</module>
+        <module>api-gateway</module>
     </modules>
 
     <dependencyManagement>
