@@ -3,3 +3,5 @@ databaseChangeLog:
       file: db/changelog/changes/01-create-inventory-items-table.yaml
   - include:
       file: db/changelog/changes/02-seed-inventory-data.yaml
+  - include:
+      file: db/changelog/changes/03-create-processed-events-table.yaml

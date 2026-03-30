@@ -39,6 +39,3 @@ databaseChangeLog:
             constraintName: fk_order_items_order
             referencedTableName: orders
             referencedColumnNames: id
-      rollback:
-        - dropTable:
-            tableName: order_items

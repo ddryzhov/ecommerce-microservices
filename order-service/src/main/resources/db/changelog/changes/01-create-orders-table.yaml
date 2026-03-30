@@ -37,6 +37,3 @@ databaseChangeLog:
               - column:
                   name: updated_at
                   type: DATETIME(6)
-      rollback:
-        - dropTable:
-            tableName: orders

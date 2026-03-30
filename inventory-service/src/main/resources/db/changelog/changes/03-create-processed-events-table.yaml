@@ -1,0 +1,27 @@
+databaseChangeLog:
+  - changeSet:
+      id: 03-create-processed-events-table
+      author: daniil
+      changes:
+        - createTable:
+            tableName: processed_events
+            columns:
+              - column:
+                  name: event_id
+                  type: VARCHAR(36)
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_processed_events
+              - column:
+                  name: event_type
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+              - column:
+                  name: processed_at
+                  type: DATETIME(6)
+                  defaultValueComputed: CURRENT_TIMESTAMP(6)
+                  constraints:
+                    nullable: false

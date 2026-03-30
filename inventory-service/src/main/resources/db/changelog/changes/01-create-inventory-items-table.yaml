@@ -25,10 +25,3 @@ databaseChangeLog:
                   defaultValueNumeric: 0
                   constraints:
                     nullable: false
-        - createCheckConstraint:
-            constraintName: chk_quantity_non_negative
-            tableName: inventory_items
-            checkConstraint: "quantity >= 0"
-      rollback:
-        - dropTable:
-            tableName: inventory_items
