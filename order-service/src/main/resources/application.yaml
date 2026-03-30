@@ -27,6 +27,25 @@ spring:
     change-log: classpath:db/changelog/db.changelog-master.yaml
     enabled: true
 
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.add.type.headers: true
+        spring.json.type.mapping: order-placed:com.daniil.orderservice.event.OrderPlacedEvent
+    consumer:
+      group-id: order-service-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.type.mapping: >
+          inventory-reserved:com.daniil.orderservice.event.InventoryReservedEvent,
+          inventory-reservation-failed:com.daniil.orderservice.event.InventoryReservationFailedEvent
+        spring.json.trusted.packages: "com.daniil.orderservice.event"
+
 management:
   endpoints:
     web:
@@ -38,5 +57,5 @@ management:
 
 logging:
   level:
-    com.example.orderservice: DEBUG
+    com.daniil.orderservice: DEBUG
     org.springframework.web: INFO

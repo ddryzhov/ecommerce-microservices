@@ -24,6 +24,7 @@ public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
     private final OrderMapper orderMapper;
+    private final OrderEventPublisher eventPublisher;
 
     @Override
     @Transactional
@@ -45,6 +46,9 @@ public class OrderServiceImpl implements OrderService {
 
         Order saved = orderRepository.save(order);
         log.info("Created order: {}", saved.getOrderNumber());
+
+        eventPublisher.publishOrderPlaced(saved);
+
         return orderMapper.toResponse(saved);
     }
 
