@@ -14,17 +14,37 @@ spring:
       maximum-pool-size: 10
       connection-timeout: 30000
 
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+    enabled: true
+
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
     show-sql: false
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
 
-  liquibase:
-    change-log: classpath:db/changelog/db.changelog-master.yaml
-    enabled: true
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.add.type.headers: true
+        spring.json.type.mapping: >
+          inventory-reserved:com.daniil.inventoryservice.event.InventoryReservedEvent,
+          inventory-reservation-failed:com.daniil.inventoryservice.event.InventoryReservationFailedEvent
+    consumer:
+      group-id: inventory-service-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.type.mapping: >
+          order-placed:com.daniil.inventoryservice.event.OrderPlacedEvent
+        spring.json.trusted.packages: "com.daniil.inventoryservice.event"
 
 management:
   endpoints:
@@ -37,5 +57,5 @@ management:
 
 logging:
   level:
-    com.example.inventoryservice: DEBUG
+    com.daniil.inventoryservice: DEBUG
     org.springframework.web: INFO

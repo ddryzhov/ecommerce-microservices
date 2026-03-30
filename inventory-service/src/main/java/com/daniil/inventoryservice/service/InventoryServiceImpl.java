@@ -4,12 +4,15 @@ import com.daniil.inventoryservice.dto.InventoryRequest;
 import com.daniil.inventoryservice.dto.InventoryResponse;
 import com.daniil.inventoryservice.dto.StockCheckRequest;
 import com.daniil.inventoryservice.dto.StockCheckResponse;
+import com.daniil.inventoryservice.event.OrderItemEvent;
+import com.daniil.inventoryservice.exception.InsufficientStockException;
 import com.daniil.inventoryservice.model.InventoryItem;
 import com.daniil.inventoryservice.exception.InventoryItemNotFoundException;
 import com.daniil.inventoryservice.mapper.InventoryMapper;
 import com.daniil.inventoryservice.repository.InventoryRepository;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -83,5 +86,30 @@ public class InventoryServiceImpl implements InventoryService {
                     );
                 })
                 .toList();
+    }
+
+    @Override
+    @Transactional
+    public void reserveStock(String orderNumber, List<OrderItemEvent> items) {
+        List<String> skuCodes = items.stream().map(OrderItemEvent::skuCode).toList();
+        Map<String, InventoryItem> inventory = inventoryRepository
+                .findBySkuCodeIn(skuCodes)
+                .stream()
+                .collect(Collectors.toMap(InventoryItem::getSkuCode, Function.identity()));
+
+        for (OrderItemEvent item : items) {
+            InventoryItem inventoryItem = Optional
+                    .ofNullable(inventory.get(item.skuCode()))
+                    .orElseThrow(() -> new InventoryItemNotFoundException(item.skuCode()));
+            if (inventoryItem.getQuantity() < item.quantity()) {
+                throw new InsufficientStockException(item.skuCode(), item.quantity(), inventoryItem.getQuantity());
+            }
+        }
+
+        for (OrderItemEvent item : items) {
+            InventoryItem inventoryItem = inventory.get(item.skuCode());
+            inventoryItem.setQuantity(inventoryItem.getQuantity() - item.quantity());
+            inventoryRepository.save(inventoryItem);
+        }
     }
 }
