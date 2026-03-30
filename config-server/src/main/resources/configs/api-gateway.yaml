@@ -1,0 +1,3 @@
+app:
+  gateway:
+    allowed-origins: "http://localhost:3000"
