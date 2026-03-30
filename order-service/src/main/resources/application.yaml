@@ -14,6 +14,9 @@ spring:
       maximum-pool-size: 10
       connection-timeout: 30000
 
+  config:
+    import: "optional:configserver:http://localhost:8888"
+
   jpa:
     hibernate:
       ddl-auto: validate
@@ -45,6 +48,13 @@ spring:
           inventory-reserved:com.daniil.orderservice.event.InventoryReservedEvent,
           inventory-reservation-failed:com.daniil.orderservice.event.InventoryReservationFailedEvent
         spring.json.trusted.packages: "com.daniil.orderservice.event"
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true
 
 management:
   endpoints:
